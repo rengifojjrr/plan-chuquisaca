@@ -154,8 +154,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
   padding:12px 14px;transition:all .2s;display:flex;flex-direction:column;gap:4px;
   box-shadow:0 1px 3px rgba(0,0,0,.05)}
 .pil:hover{border-color:var(--g3);box-shadow:0 4px 12px rgba(30,107,61,.1)}
-.pnum{font-size:clamp(16px,1.9vw,28px);font-weight:900;color:var(--soft);
-  -webkit-text-stroke:1px var(--border);line-height:1}
+.pnum{font-size:clamp(16px,1.9vw,28px);font-weight:900;color:var(--g4);
+  -webkit-text-stroke:1px var(--g2);line-height:1}
 .ptit{font-size:clamp(9px,1vw,14px);font-weight:700;color:var(--g1)}
 .pdesc{font-size:clamp(7px,.8vw,11px);color:var(--text2)}
 .fp{background:var(--soft);border:1px solid #c8e6c9;border-radius:100px;
@@ -246,12 +246,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
 .btab tr:hover td{background:var(--soft)}
 
 /* ── MAP ── */
-#baseMap{pointer-events:none}
-#baseMap path[stroke="none"]{display:none}
-#baseMap path[stroke="none"]{display:none}
+#baseMap{display:none}
 .state-hit{cursor:pointer;transform-box:fill-box;transform-origin:center;outline:none;
   transition:transform .22s ease,filter .22s ease}
-.state-shape{fill:#ffffff;fill-opacity:.001;stroke:transparent;stroke-width:2;pointer-events:all;
+.state-shape{fill:#c5dce8;fill-opacity:.8;stroke:#7ca8bd;stroke-width:.8;pointer-events:all;
   transition:fill .18s ease,fill-opacity .18s ease,stroke .18s ease}
 .state-hit{cursor:pointer}
 .state-hit:hover{filter:brightness(1.35)}
@@ -326,8 +324,26 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
   .sbox .n { font-size: clamp(16px, 5vw, 28px); }
 
   /* ── Two-column → single column ── */
-  .tcol { flex-direction: column; gap: 14px; }
-  .col { overflow: visible !important; }
+  .tcol {
+    flex-direction: column !important;
+    gap: 14px;
+    flex: none !important;
+    height: auto !important;
+    min-height: unset !important;
+    overflow: visible !important;
+  }
+  .col {
+    overflow: visible !important;
+    flex: none !important;
+    height: auto !important;
+    min-height: unset !important;
+  }
+  .scrl {
+    overflow-y: visible !important;
+    max-height: none !important;
+    flex: none !important;
+    min-height: unset !important;
+  }
 
   /* ── Grids ── */
   .g3 { grid-template-columns: 1fr 1fr !important; }
@@ -335,7 +351,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
   .g2 { grid-template-columns: 1fr 1fr !important; }
 
   /* ── Pillars ── */
-  .pg { grid-template-columns: 1fr 1fr !important; gap: 8px; }
+  .pg {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px;
+    flex: none !important;
+    height: auto !important;
+    min-height: unset !important;
+    overflow: visible !important;
+  }
 
   /* ── Archetype grid ── */
   .ag { grid-template-columns: 1fr 1fr !important; gap: 8px; }
@@ -441,10 +464,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
   /* Dato critico */
   .note-critical { font-size: 10px; padding: 6px 10px; }
 
-  /* Map + panel: stack vertically */
+  /* Map + panel: stack vertically, liberar height constraint */
   [style*="display:flex;gap:14px;flex:1;min-height:0;margin-bottom:8px"] {
     flex-direction: column !important;
     gap: 10px !important;
+    flex: none !important;
+    min-height: unset !important;
+    height: auto !important;
   }
 
   /* SVG map: full width, fixed height */
@@ -832,13 +858,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg2);
 <div style="display:flex;gap:14px;flex:1;min-height:0;margin-bottom:8px">
   <!-- SVG MAP -->
   <div class="a3" style="flex:3;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;padding:4px">
-    <svg viewBox="0 58 626 322" style="width:100%;height:100%;max-height:60vh;display:block;overflow:hidden">
-      <defs>
-        <clipPath id="bmClip">
-          <rect x="0" y="55" width="626" height="255"/>
-        </clipPath>
-      </defs>
-      <g id="baseMap" clip-path="url(#bmClip)">
+    <svg viewBox="0 55 626 360" style="width:100%;height:100%;max-height:60vh;display:block">
+      <g id="baseMap">
 <g stroke-width="2.00" fill="none" stroke-linecap="butt">
 <path stroke="#6b8fa8" vector-effect="non-scaling-stroke" d="
   M 214.05 50.38
@@ -24980,7 +25001,7 @@ function ui(){document.getElementById("pb").style.width=((cur+1)/tot*100)+"%";do
 function go(n){if(n<0||n>=tot)return;slides[cur].classList.remove("active");slides[cur].classList.add("out");setTimeout(()=>slides[cur].classList.remove("out"),500);cur=n;slides[cur].classList.add("active");ui();}
 function nextSlide(){go(cur+1)}function prevSlide(){go(cur-1)}
 document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key===" "||e.key==="PageDown"){e.preventDefault();nextSlide()}if(e.key==="ArrowLeft"||e.key==="PageUp"){e.preventDefault();prevSlide()}});
-let tx=null;document.addEventListener("touchstart",e=>{if(e.touches.length===1)tx=e.touches[0].clientX;else tx=null},{passive:true});document.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>60)dx<0?nextSlide():prevSlide();},{passive:true});
+let tx=null,ty=null;document.addEventListener("touchstart",e=>{if(e.touches.length===1){tx=e.touches[0].clientX;ty=e.touches[0].clientY;}else{tx=ty=null;}},{passive:true});document.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;tx=ty=null;if(Math.abs(dx)>70&&Math.abs(dx)>Math.abs(dy)*2.5)dx<0?nextSlide():prevSlide();},{passive:true});
 function initP(id){const c=document.getElementById(id);if(!c)return;const ctx=c.getContext("2d");function r(){c.width=c.offsetWidth;c.height=c.offsetHeight}r();window.addEventListener("resize",r);const p=Array.from({length:45},()=>({x:Math.random()*c.width,y:Math.random()*c.height,s:Math.random()*3+1,sx:(Math.random()-.5)*.3,sy:-Math.random()*.4-.1,o:Math.random()*.3+.05,col:["#2e8b57","#7bc67b","#a3c853","#f4c430","#0891b2"][Math.floor(Math.random()*5)]}));function d(){ctx.clearRect(0,0,c.width,c.height);p.forEach(q=>{ctx.beginPath();ctx.arc(q.x,q.y,q.s,0,Math.PI*2);ctx.fillStyle=q.col;ctx.globalAlpha=q.o;ctx.fill();q.x+=q.sx;q.y+=q.sy;if(q.y<-10){q.y=c.height+10;q.x=Math.random()*c.width}});ctx.globalAlpha=1;requestAnimationFrame(d)}d()}initP("cv");initP("clv");
 /* MAP */
 /* MAP */
